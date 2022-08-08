@@ -1,0 +1,17 @@
+- name: Create Docker Registry
+  docker_container:
+    name: registry
+    image: registry:2
+    state: started
+    restart_policy: unless-stopped
+    volumes:
+      - /etc/docker/registry:/var/lib/registry
+    published_ports:
+      - "{{registry_port}}:5000"
+
+- name: Copy daemon.json file to /etc/docker
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+  notify: Restart docker
+
